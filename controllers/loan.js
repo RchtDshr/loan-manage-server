@@ -4,14 +4,11 @@ const Loan = require('../models/loan');
 const createLoan = async (req, res) => {
     try {
         const { amount, term, startDate } = req.body; // Add startDate from request
-        const userId = req.id; //from jwt
-    
-        // Ensure startDate is provided
-        if (!startDate) {
-          return res.status(400).json({ message: 'Start date is required' });
-        }
+        const userId = req.user.id; //from jwt
     
         const startLoanDate = new Date(startDate);
+        console.log("startLoanDate ", startLoanDate)
+        console.log("startDate ", startDate)
         const repaymentAmount = parseFloat((amount / term).toFixed(2));
         let repayments = [];
     
@@ -20,9 +17,10 @@ const createLoan = async (req, res) => {
           const dueDate = new Date(startLoanDate);
           dueDate.setDate(dueDate.getDate() + 7 * i); // weekly intervals from start date
           repayments.push({
-            dueDate,
-            amount: i === term - 1 ? amount - repaymentAmount * (term - 1) : repaymentAmount,
-          });
+              dueDate,
+              amount: i === term - 1 ? amount - repaymentAmount * (term - 1) : repaymentAmount,
+            });
+            console.log(dueDate)
         }
     
         const loan = new Loan({
@@ -31,11 +29,13 @@ const createLoan = async (req, res) => {
           term,
           repayments,
           createdAt: new Date(),
+          status: 'PENDING'
         });
     
         await loan.save();
         res.status(201).json({ message: 'Loan created and repayments scheduled', loan });
       } catch (error) {
+        console.log(error)
         res.status(500).json({ message: 'Server error', error });
       }
 };

@@ -9,8 +9,7 @@ const authMiddleware = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.id = decoded.id; // Store decoded token (user data) in request object
-        req.role = decoded.role; // Store decoded token (user data) in request object
+        req.user = decoded;
         next();
     } catch (error) {
         return res.status(403).json({ message: 'Invalid token' });
@@ -19,7 +18,7 @@ const authMiddleware = (req, res, next) => {
 
 // Middleware for admin role check
 const adminMiddleware = (req, res, next) => {
-    if (req.role !== 'admin') {
+    if (req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
     }
     next();
