@@ -7,8 +7,6 @@ const createLoan = async (req, res) => {
         const userId = req.user.id; //from jwt
     
         const startLoanDate = new Date(startDate);
-        console.log("startLoanDate ", startLoanDate)
-        console.log("startDate ", startDate)
         const repaymentAmount = parseFloat((amount / term).toFixed(2));
         let repayments = [];
     
@@ -20,7 +18,6 @@ const createLoan = async (req, res) => {
               dueDate,
               amount: i === term - 1 ? amount - repaymentAmount * (term - 1) : repaymentAmount,
             });
-            console.log(dueDate)
         }
     
         const loan = new Loan({
@@ -33,7 +30,7 @@ const createLoan = async (req, res) => {
         });
     
         await loan.save();
-        res.status(201).json({ message: 'Loan created and repayments scheduled', loan });
+        res.status(200).json({ message: 'Loan created and repayments scheduled', loan });
       } catch (error) {
         console.log(error)
         res.status(500).json({ message: 'Server error', error });
@@ -61,7 +58,7 @@ const approveLoan = async (req, res) => {
 const getUserLoans = async (req, res) => {
   try {
     const userId = req.user.id;
-    const loans = await Loan.find({ user: userId });
+    const loans = await Loan.find({ user: userId }).populate('repayments');
     
     res.status(200).json({ loans });
   } catch (error) {
