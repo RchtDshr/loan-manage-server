@@ -7,6 +7,6 @@ const router = express.Router();
 router.post('/', createLoan); // Create loan
 router.put('/:loanId/approve', adminMiddleware, approveLoan); // Admin approves loan
 router.get('/', getUserLoans); // Get all loans for the logged-in user
-router.post('/:loanId/repayment/:repaymentId', submitRepayment); // Submit repayment
+router.post('/repayment', submitRepayment); // Submit repayment
 
 module.exports = router;

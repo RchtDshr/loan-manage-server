@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 const repaymentSchema = new mongoose.Schema({
   dueDate: { type: Date, required: true },
-  amount: { type: Number, required: true },
+  amount: { type: Number, required: true }, // The expected amount
+  amountPaid: { type: Number, default: 0 }, // The amount the user has actually paid
   status: { type: String, enum: ['PENDING', 'PAID'], default: 'PENDING' }
 });
 
