@@ -37,23 +37,6 @@ const createLoan = async (req, res) => {
   }
 };
 
-// Admin Approves Loan
-const approveLoan = async (req, res) => {
-  try {
-    const loanId = req.params.loanId;
-
-    const loan = await Loan.findById(loanId);
-    if (!loan) return res.status(404).json({ message: 'Loan not found' });
-
-    loan.status = 'APPROVED';
-    await loan.save();
-
-    res.status(200).json({ message: 'Loan approved', loan });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
-  }
-};
-
 // Get Loans for the Logged-In User
 const getUserLoans = async (req, res) => {
   try {
@@ -66,12 +49,22 @@ const getUserLoans = async (req, res) => {
   }
 };
 
+const getApprovedLoan = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const loans = await Loan.find({ user: userId, status: "APPROVED" }).populate('repayments');
+
+    res.status(200).json({ loans });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+}
 // Submit Repayment
 const submitRepayment = async (req, res) => {
   const { loanId, repaymentId, amount } = req.body;
 
   try {
-    const loan = await Loan.findById(loanId);
+    const loan = await Loan.find({ id: loanId, status: { $in: ["APPROVED", "PENDING"] } });
 
     if (!loan) return res.status(404).json({ message: 'Loan not found' });
 
@@ -104,7 +97,7 @@ const submitRepayment = async (req, res) => {
     if (isLastInstallment && amount !== repayment.amount) {
       return res.status(400).json({ message: 'You must pay exactly the due amount for the last installment.' });
     }
-    
+
     // Check if all repayments are now paid, and mark the loan as PAID
     const allRepaymentsPaid = loan.repayments.every((rep) => rep.status === 'PAID');
     if (allRepaymentsPaid) {
@@ -122,6 +115,6 @@ const submitRepayment = async (req, res) => {
 module.exports = {
   submitRepayment,
   getUserLoans,
-  approveLoan,
-  createLoan
+  createLoan,
+  getApprovedLoan
 }

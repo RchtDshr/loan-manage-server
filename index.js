@@ -6,9 +6,8 @@ const app = express();
 require('dotenv').config();
 const userRoutes=require('./routes/user')
 const loanRoutes=require('./routes/loan')
-const {authMiddleware} = require('./middleware/auth'); // assumes JWT middleware for user authorization
-// const adRoutes = require('./routes/adRoutes') 
-// const { authenticate } = require('./middleware/auth');
+const adminRoutes=require('./routes/admin')
+const {authMiddleware, adminMiddleware} = require('./middleware/auth'); // assumes JWT middleware for user authorization
 
 // Middleware
 app.use(cors());
@@ -19,8 +18,7 @@ app.use(express.urlencoded({ limit: '100mb', extended: true }));
 //Api
 app.use("/user", userRoutes);
 app.use("/loan" ,authMiddleware, loanRoutes);
-// app.use("/user", userRoutes);
-// app.use("/api", authenticate, adRoutes);
+app.use("/admin" ,authMiddleware, adminMiddleware, adminRoutes);
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
