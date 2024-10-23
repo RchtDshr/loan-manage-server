@@ -3,7 +3,7 @@ const { getAllLoans, approveLoan } = require('../controllers/admin');
 
 const router = express.Router();
 
-router.get('/loans', getAllLoans); // Get all loans
-router.put('/loans/approve', approveLoan); // Get all loans
+router.get('/loans', getAllLoans); 
+router.put('/loans/approve', approveLoan); 
 
 module.exports = router;

@@ -2,8 +2,7 @@ const Loan = require('../models/loan');
 
 const getAllLoans = async (req, res) => {
     try {
-        const loans = await Loan.find({ status: { $in: ["APPROVED", "PENDING"] }}).populate('user'); // Adjust based on your Loan model
-        
+        const loans = await Loan.find({ status: { $in: ["APPROVED", "PENDING"] }}).populate('user'); 
         res.json(loans);
     } catch (error) {
         console.error('Error fetching loans:', error);
@@ -13,7 +12,7 @@ const getAllLoans = async (req, res) => {
 
 // Admin Approves Loan
 const approveLoan = async (req, res) => {
-    const { loanId } = req.body; // Extract loanId from request body
+    const { loanId } = req.body; 
 
   try {
     const loan = await Loan.findById(loanId);
@@ -25,7 +24,7 @@ const approveLoan = async (req, res) => {
       return res.status(400).json({ message: 'Loan is already approved or paid' });
     }
 
-    loan.status = 'APPROVED'; // Change status to approved
+    loan.status = 'APPROVED'; 
     await loan.save();
 
     res.json({ message: 'Loan approved successfully', loan });

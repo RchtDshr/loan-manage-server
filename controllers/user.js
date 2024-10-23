@@ -2,16 +2,10 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-// OTP storage
-let otpStore = {};
-
 // Generate JWT
 const generateToken = (user) => {
     return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
 };
-
-// Generate a random OTP
-const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
 
 // Sign-up route (sends OTP)
 const signup = async (req, res) => {

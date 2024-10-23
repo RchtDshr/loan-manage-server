@@ -62,7 +62,7 @@ const getApprovedLoan = async (req, res) => {
 // Submit Repayment
 const submitRepayment = async (req, res) => {
   const { loanId, repaymentId, amount } = req.body;
-console.log(loanId, repaymentId, amount)
+
   try {
     const loan = await Loan.findById(loanId);
 
