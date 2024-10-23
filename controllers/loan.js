@@ -62,9 +62,9 @@ const getApprovedLoan = async (req, res) => {
 // Submit Repayment
 const submitRepayment = async (req, res) => {
   const { loanId, repaymentId, amount } = req.body;
-
+console.log(loanId, repaymentId, amount)
   try {
-    const loan = await Loan.find({ id: loanId, status: { $in: ["APPROVED", "PENDING"] } });
+    const loan = await Loan.findById(loanId);
 
     if (!loan) return res.status(404).json({ message: 'Loan not found' });
 

@@ -13,19 +13,26 @@ const getAllLoans = async (req, res) => {
 
 // Admin Approves Loan
 const approveLoan = async (req, res) => {
-    try {
-        const loanId = req.params.loanId;
+    const { loanId } = req.body; // Extract loanId from request body
 
-        const loan = await Loan.findById(loanId);
-        if (!loan) return res.status(404).json({ message: 'Loan not found' });
-
-        loan.status = 'APPROVED';
-        await loan.save();
-
-        res.status(200).json({ message: 'Loan approved', loan });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error });
+  try {
+    const loan = await Loan.findById(loanId);
+    if (!loan) {
+      return res.status(404).json({ message: 'Loan not found' });
     }
+
+    if (loan.status !== 'PENDING') {
+      return res.status(400).json({ message: 'Loan is already approved or paid' });
+    }
+
+    loan.status = 'APPROVED'; // Change status to approved
+    await loan.save();
+
+    res.json({ message: 'Loan approved successfully', loan });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
 
 module.exports = {
